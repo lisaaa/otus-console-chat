@@ -40,4 +40,12 @@ public class Server {
             client.sendMessage(message);
         }
     }
+
+    public synchronized void sendMessageToClient(String message) {
+        for (ClientHandler client : clients) {
+            if (message.contains(client.getUsername())) {
+                client.sendMessage(message);
+            }
+        }
+    }
 }
