@@ -1,0 +1,28 @@
+CREATE TABLE public.tests (
+	id int4 GENERATED ALWAYS AS IDENTITY NOT NULL,
+	"name" varchar NOT NULL,
+	CONSTRAINT tests_pk PRIMARY KEY (id),
+	CONSTRAINT tests_unique UNIQUE (name)
+);
+
+CREATE TABLE public.questions (
+	id int4 GENERATED ALWAYS AS IDENTITY NOT NULL,
+	test_id int4 NOT NULL,
+	"name" varchar NOT NULL,
+	CONSTRAINT questions_pk PRIMARY KEY (id)
+);
+
+-- public.questions foreign keys
+
+ALTER TABLE public.questions ADD CONSTRAINT questions_tests_fk FOREIGN KEY (test_id) REFERENCES public.tests(id);
+
+CREATE TABLE public.answer (
+	id int4 GENERATED ALWAYS AS IDENTITY NOT NULL,
+	question_id int4 NOT NULL,
+	"right" bool NOT NULL,
+	description varchar NOT NULL,
+	CONSTRAINT answer_pk PRIMARY KEY (id)
+);
+
+-- public.answer foreign keys
+ALTER TABLE public.answer ADD CONSTRAINT answer_questions_fk FOREIGN KEY (question_id) REFERENCES public.questions(id);
