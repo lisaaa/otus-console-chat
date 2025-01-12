@@ -3,21 +3,19 @@ package ru.otus.chat.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import static ru.otus.chat.server.Role.ADMIN;
-import static ru.otus.chat.server.Role.USER;
 
 public class Server {
     private int port;
     private List<ClientHandler> clients;
     private AuthenticatedProvider authenticatedProvider;
 
-    public Server(int port) {
+    public Server(int port) throws SQLException {
         this.port = port;
         clients = new CopyOnWriteArrayList<>();
-        authenticatedProvider = new InMemoryAuthenticatedProvider(this);
+        authenticatedProvider = new JDBCAuthenticatedProvider(this);
     }
 
     public void start() {
@@ -71,7 +69,8 @@ public class Server {
     }
 
     public synchronized void unsubscribeClient(String message, ClientHandler clientHandler) {
-        if (ADMIN.equals(authenticatedProvider.getRoleByUsername(clientHandler.getUsername()))) {
+       // if (ADMIN.equals(authenticatedProvider.getRoleByUsername(clientHandler.getUsername()))) {
+        if (authenticatedProvider.isAdmin(clientHandler.getUsername())) {
             for (ClientHandler client : clients) {
                     if (message.split(" ")[1].equals(client.getUsername())) {
                         unsubscribe(client);
