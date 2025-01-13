@@ -11,7 +11,7 @@ public class User {
     private String username;
     private List<Role> roles = new ArrayList<>();
 
-    public User(int id, String password, String login, String username) {
+    public User(int id, String password, String login, String username ) {
         this.id = id;
         this.password = password;
         this.login = login;

@@ -10,7 +10,7 @@ import static ru.otus.chat.server.RoleName.USER;
 
 public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
 
-    private List<User> users = getUsers();
+    private List<User> users = new ArrayList<>();
     private Server server;
     private static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/otus-db";
     private static final String USERS_QUERY = "select * from users";
@@ -57,9 +57,9 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
             try (ResultSet resultSet = statement.executeQuery(USERS_QUERY)) {
                 while (resultSet.next()) {
                     int id = resultSet.getInt("id");
-                    String password = resultSet.getString(2);
-                    String login = resultSet.getString(3);
-                    String username = resultSet.getString(4);
+                    String password = resultSet.getString("password");
+                    String login = resultSet.getString("login");
+                    String username = resultSet.getString("username");
                     User user = new User(id, password, login,username);
                     users.add(user);
                 }
@@ -104,6 +104,7 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
     }
 
     private String getUsernameByLoginAndPassword(String login, String password) {
+        users = getUsers();
         for ( User u : users) {
             if (u.getLogin().equals(login) && u.getPassword().equals(password)) {
                 return u.getUsername();
@@ -130,7 +131,7 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
     }
 
     public boolean isLoginAlreadyExists(String login) {
-        for (User u : users) {
+        for (User u : this.users) {
             if (u.getLogin().equals(login)) {
                 return true;
             }
@@ -139,7 +140,8 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
     }
 
     private boolean isUsernameAlreadyExists(String username) {
-        for (User u : users) {
+
+        for (User u : this.users) {
             if (u.getUsername().equals(username)) {
                 return true;
             }
