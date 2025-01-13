@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static ru.otus.chat.server.RoleName.ADMIN;
+
 public class Server {
     private int port;
     private List<ClientHandler> clients;
@@ -69,14 +71,13 @@ public class Server {
     }
 
     public synchronized void unsubscribeClient(String message, ClientHandler clientHandler) {
-       // if (ADMIN.equals(authenticatedProvider.getRoleByUsername(clientHandler.getUsername()))) {
         if (authenticatedProvider.isAdmin(clientHandler.getUsername())) {
             for (ClientHandler client : clients) {
-                    if (message.split(" ")[1].equals(client.getUsername())) {
-                        unsubscribe(client);
-                        System.out.println(client.getUsername());
-                    }
+                if (message.split(" ")[1].equals(client.getUsername())) {
+                    unsubscribe(client);
+                    System.out.println(client.getUsername());
                 }
+            }
         } else {
             clientHandler.sendMsg("У вас недостаточно прав для удаления пользователя из чата!");
         }

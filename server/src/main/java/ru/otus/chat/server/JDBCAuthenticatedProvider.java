@@ -24,9 +24,10 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
             VALUES(?, ?, ?)
             """;
     private static final String IS_ADMIN_QUERY = """
-            select count(1) from roles r
-            	join users_to_roles ur on r.id = ur.role_id
-            	where user_name = ? and r."name" = 'admin'
+            	select count(1) from roles r
+             	join users_to_roles ur on r.id = ur.role_id
+             	join users u on u.id = ur.user_id
+             	where u.username = ? and r."name" = 'admin'
             """;
 
     private Connection connection;
@@ -38,9 +39,17 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
 
     public void createUser(String login, String password, String username)  {
         try (PreparedStatement ps = connection.prepareStatement(USER_CREATE_QUERY)) {
-            ps.setString(2, login);
-            ps.setString(3, password);
-            ps.setString(4, username);
+            ps.setString(1, login);
+            ps.setString(2, password);
+            ps.setString(3, username);
+            try (ResultSet resultSet = ps.executeQuery()) {
+                ResultSet generatedKeys = ps.getGeneratedKeys();
+                User user = new User(generatedKeys.getInt("id"), password, login,username);
+                users.add(user);
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -91,7 +100,7 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
     public boolean isAdmin(String username) {
         int flag = 0;
         try (PreparedStatement ps = connection.prepareStatement(IS_ADMIN_QUERY)) {
-            ps.setString(4, username);
+            ps.setString(1, username);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     flag = rs.getInt(1);
