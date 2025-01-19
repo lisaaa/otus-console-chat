@@ -22,7 +22,6 @@ public class ClientHandler {
         new Thread(() -> {
             try {
                 System.out.println("Клиент подключился на порту: " + socket.getPort());
-                //цикл аутентификации
                 while (true) {
                     sendMsg("Для начала работы надо пройти аутентификацию. Формат команды /auth login password \n" +
                             "или регистрацию. Формат команды /reg login password username ");
@@ -33,7 +32,6 @@ public class ClientHandler {
                             sendMsg("/exitok");
                             break;
                         }
-                        // /auth login password
                         if (message.startsWith("/auth ")) {
                             String[] element = message.split(" ");
                             if (element.length != 3){
@@ -46,7 +44,6 @@ public class ClientHandler {
                                 break;
                             }
                         }
-                        // /reg login password username
                         if (message.startsWith("/reg ")) {
                             String[] element = message.split(" ");
                             if (element.length != 4){
@@ -61,7 +58,6 @@ public class ClientHandler {
 
                     }
                 }
-                //цикл работы
                 while (true) {
                     String message = in.readUTF();
                     if (message.startsWith("/")) {

@@ -7,8 +7,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static ru.otus.chat.server.RoleName.ADMIN;
-
 public class Server {
     private int port;
     private List<ClientHandler> clients;
@@ -28,7 +26,6 @@ public class Server {
                 Socket socket = serverSocket.accept();
                 new ClientHandler(socket, this);
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
