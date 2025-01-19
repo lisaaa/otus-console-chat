@@ -172,7 +172,6 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
             clientHandler.sendMsg("Указанное имя пользователя уже занято");
             return false;
         }
-        //users.add(new User(login, password, username,USER));
         createUser(login, password, username);
         clientHandler.setUsername(username);
         server.subscribe(clientHandler);
