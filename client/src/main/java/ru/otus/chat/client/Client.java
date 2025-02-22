@@ -25,6 +25,14 @@ public class Client {
                         if (message.startsWith("/exitok")) {
                             break;
                         }
+                        if (message.startsWith("/authok ")) {
+                            System.out.println("Удалось успешно войти в чат с именем пользователя "
+                                    + message.split(" ")[1]);
+                        }
+                        if (message.startsWith("/regok ")) {
+                            System.out.println("Удалось успешно зарегистрироваться с именем пользователя "
+                                    + message.split(" ")[1]);
+                        }
                     } else {
                         System.out.println(message);
                     }
@@ -47,19 +55,25 @@ public class Client {
 
     public void disconnect(){
         try {
-            in.close();
+            if (in != null) {
+                in.close();
+            }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         try {
-            out.close();
+            if (out != null) {
+                out.close();
+            }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         try {
-            socket.close();
+            if (socket != null) {
+                socket.close();
+            }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 }
